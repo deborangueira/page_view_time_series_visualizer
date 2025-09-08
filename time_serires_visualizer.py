@@ -10,7 +10,10 @@ df['date'] = pd.to_datetime(df['date']) #transforming "date" data type from obje
 df = df.set_index('date') #defined date as the index 
 
 # Clean data
-df = None
+df = df[# creating a new dataframe with cleaned data
+    # I'll take only the data that represents 95% of the original dataframe based on the interval defined bellow:     
+    (df['value'] >= df['value'].quantile(0.025)) & 
+    (df['value'] <= df['value'].quantile(0.975))]
 
 
 def draw_line_plot():
