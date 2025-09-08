@@ -16,12 +16,17 @@ df = df[# creating a new dataframe with cleaned data
     (df['value'] <= df['value'].quantile(0.975))]
 
 
-def draw_line_plot():
+def draw_line_plot(): # Matplotlib to draw a line chart
     # Draw line plot
 
+    fig = df.plot.line(figsize=(15,5), # chart's size and proportion
+                        color='blue'); # color of the line
+    plt.title('Daily freeCodeCamp Forum Page Views 5/2016-12/2019'); # title of the chart
+    plt.xlabel('Date'); # x-axis legend
+    plt.xticks(rotation = 0) # set the legend of x-axis to fully horizontal
+    plt.ylabel('Page Views'); # y-axis legend
 
-
-
+    fig = fig.figure
 
     # Save image and return fig (don't change this part)
     fig.savefig('line_plot.png')
@@ -29,13 +34,23 @@ def draw_line_plot():
 
 def draw_bar_plot():
     # Copy and modify data for monthly bar plot
-    df_bar = None
+    df_bar = df.copy()
+    #Since the index is a datetimeIndex (I confirmed it with 'df_bar.index.dtype'), it has atributes like .year, .month, .day, etc that returns a array with this specific information.
+    df_bar['year'] = df.index.year # Creates the 'year' column in df_bar by adding the year values ​​extracted from the df index.
+    df_bar['month'] = df.index.month_name() # Creates the 'month' column in df_bar by adding the month values ​​extracted from the df index.
+
+    # grouping and organizing the df
+    df_bar_group = df_bar.groupby(['year', 'month'])['value'].mean() # group by year, than subgroup by month and show the mean of the values for each
+    df_bar_group = df_bar_group.unstack(level='month') # reshape the df making it wide insted of long, where each column is a month and each line a year
+    df_bar_group = df_bar_group[['January', 'February', 'March', 'April', 'May',
+                                'June', 'July', 'August', 'September', 'October', 'November', 'December']] # organize the order of the months
 
     # Draw bar plot
-
-
-
-
+    fig = df_bar_group.plot.bar(figsize=(7,7)).figure # creating a bar chart based on the "df_bar_group" and setting the proportion of the image
+    plt.xlabel('Years');
+    #plt.xticks(rotation = 0)
+    plt.ylabel('Average Page Views');
+    plt.legend(title='Months');
 
     # Save image and return fig (don't change this part)
     fig.savefig('bar_plot.png')
